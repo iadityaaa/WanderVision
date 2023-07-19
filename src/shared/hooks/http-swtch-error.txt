@@ -1,0 +1,19 @@
+
+New type pf error handling : What if our req is on its way and during that only our user switches the page.
+
+
+
+*If you switch to a different page while an asynchronous request is still in progress, 
+it won't necessarily result in an error. However, it can lead to unexpected behavior or "race conditions" if not handled properly.
+
+
+*Here's what typically happens when you switch pages while an asynchronous request is ongoing:
+1.The component unmounts: When you switch to a different page, the current component unmounts. 
+->This means that any ongoing asynchronous operations inside the component, such as the fetch request in your case, may be canceled or left unresolved.
+2.Potential memory leaks: If the asynchronous operation continues running even after the component unmounts, it can cause memory leaks or attempts to update the state of an unmounted component. 
+This can lead to errors and unexpected behavior.
+
+
+*To avoid these issues, you can follow some best practices:
+Cancel ongoing requests: Use an appropriate cleanup mechanism to cancel ongoing requests when the component unmounts. 
+For example, you can use the AbortController API in combination with the signal option of the fetch request to cancel the request when the component unmounts.
