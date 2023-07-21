@@ -7,7 +7,7 @@ const userSchema = new schema({
   name: { type: String, required: true },
   email: { type: String, required: true }, //Here we also have to check for if the email already registered using mongoose-unique-validator
   password: { type: String, required: true, minlength: 6 },
-  image: { type: String },
+  image: { type: String, required: true },
   //making it an array since one user can have multiple places
   places: [{ type: mongoose.Types.ObjectId, required: true, ref: "Place" }],
 });

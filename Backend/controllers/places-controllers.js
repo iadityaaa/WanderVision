@@ -6,6 +6,7 @@ const HttpError = require("../models/http-error");
 const getCoordsForAddress = require("../util/location");
 const Place = require("../models/place.js");
 const User = require("../models/user.js");
+const place = require("../models/place.js");
 
 const getPlaceById = async (req, res, next) => {
   const placeId = req.params.pid; // { pid: 'p1' }
@@ -68,9 +69,7 @@ const getPlacesByUserId = async (req, res, next) => {
   if (!places || places.length === 0) {
     //return next(error) when we are in an asynchronous action
     //With next you need to return else code below this will get executed(not in case of throw)
-    return next(
-      new HttpError("This user has no visted places yet.", 404)
-    );
+    return next(new HttpError("This user has no visted places yet.", 404));
   }
   //here to Obj cannot br use as find in mongoose returns an array
   res.json({
@@ -190,6 +189,15 @@ const updatePlace = async (req, res, next) => {
     );
     return next(error);
   }
+
+  if (updatedPlace.creator.toString() !== req.userData.userId) {
+    const error = new HttpError(
+      "You are not authorized to access this place.",
+      401
+    );
+    return next(error);
+  }
+
   //Why am i able to change a const here?? Check  primitive vs referenced values in JS
   //Basically const store the address of the object
   updatedPlace.title = title;
@@ -219,6 +227,7 @@ const deletePlace = async (req, res, next) => {
   let place;
   try {
     //populate allows us to access a doc stored in some other collection and to manipulate that data
+    //with the populate field the place holds the full user object
     place = await Place.findById(placeId).populate("creator");
   } catch (err) {
     const error = new HttpError(
@@ -231,6 +240,14 @@ const deletePlace = async (req, res, next) => {
 
   if (!place) {
     const error = new HttpError("Sorry! Couldn't find the given place.", 404);
+    return next(error);
+  }
+
+  if (place.creator.id !== req.userData.userId) {
+    const error = new HttpError(
+      "You are not authorized to delete this place.",
+      401
+    );
     return next(error);
   }
 

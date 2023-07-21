@@ -80,7 +80,7 @@ const Auth = () => {
             "Content-Type": "application/json",
           }
         );
-        auth.login(responseData.user.id);
+        auth.login(responseData.userId, responseData.token);
       } catch (err) {} //empty catch since we alredy handled the err in hook (or use .then())
     } else {
       //using try catch since fetch returns a promise
@@ -97,7 +97,7 @@ const Auth = () => {
           "POST",
           formData //automatically adds headers
         );
-        auth.login(responseData.user.id);
+        auth.login(responseData.userId, responseData.token);
       } catch (err) {}
     }
   };
