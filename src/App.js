@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, Suspense } from "react";
 import {
   BrowserRouter as Router, // The main router wrapper
   Switch, // To select a particular route
@@ -8,14 +8,29 @@ import {
 // REACT ROUTER DOM (a 3rd party library helps in routing)
 // npm i --save react-router-dom@5 --save-exact
 // (version 6 of RRD has many changes))
-
-import Users from "./user/pages/Users";
-import NewPlace from "./places/pages/NewPlace";
-import UserPlaces from "./places/pages/UserPlaces";
-import UpdatePlace from "./places/pages/UpdatePlace";
-import Auth from "./user/pages/Auth";
 import MainNavigation from "./shared/components/Navigation/MainNavigation"; //Our header
+import Users from "./user/pages/Users";
+// import NewPlace from "./places/pages/NewPlace";
+// import UserPlaces from "./places/pages/UserPlaces";
+// import UpdatePlace from "./places/pages/UpdatePlace";
+// import Auth from "./user/pages/Auth";
+
 import { AuthContext } from "./shared/context/auth-context";
+import LoadingSpinner from "./shared/components/UIElements/LoadingSpinner";
+
+//Lazy loading
+const NewPlace = React.lazy(() => {
+  return import("./places/pages/NewPlace");
+});
+const UserPlaces = React.lazy(() => {
+  return import("./places/pages/UserPlaces");
+});
+const UpdatePlace = React.lazy(() => {
+  return import("./places/pages/UpdatePlace");
+});
+const Auth = React.lazy(() => {
+  return import("./user/pages/Auth")
+});
 
 let logoutTimer;
 
@@ -129,7 +144,19 @@ const App = () => {
         {/* The header should always appear that's why we Place above the switch statement and without a specific Route path */}
         <MainNavigation />
         {/* main component adds margin of 5rem so the MainNav doesnot overlap with the Routes */}
-        <main>{routes}</main>
+        <main>
+          {" "}
+          <Suspense
+            fallback={
+              <div className="center">
+                <LoadingSpinner />
+              </div>
+            }
+          >
+            {" "}
+            {routes}{" "}
+          </Suspense>{" "}
+        </main>
       </Router>
     </AuthContext.Provider>
   );

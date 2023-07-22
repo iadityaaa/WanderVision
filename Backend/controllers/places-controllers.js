@@ -1,6 +1,7 @@
 //const uuid = require('uuid/v4'); using this to assign a unique id to specific user but know it can be done by mongodb
 const { validationResult } = require("express-validator");
 const mongoose = require("mongoose");
+const fs = require("fs");
 //This is the second part of input validation which gives us the result for the middlewares called
 const HttpError = require("../models/http-error");
 const getCoordsForAddress = require("../util/location");
@@ -251,6 +252,8 @@ const deletePlace = async (req, res, next) => {
     return next(error);
   }
 
+  const imagePath = place.image;
+
   //updating our dummy places data
   //returns a brand new array filtered acc to our condition
   //We are replacing the dummy places with the new array
@@ -271,6 +274,11 @@ const deletePlace = async (req, res, next) => {
     console.log(err);
     return next(error);
   }
+
+  fs.unlink(imagePath,(err)=>{
+    console.log(err);
+  });
+
   res.status(200).json({ message: "Deleted place." });
 };
 

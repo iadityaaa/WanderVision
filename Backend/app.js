@@ -10,7 +10,7 @@ const placesRoutes = require("./routes/places-routes");
 const usersRoutes = require("./routes/users-routes");
 const HttpError = require("./models/http-error");
 
-const url = 'mongodb+srv://Aditya:beentheredonethat25@cluster0.mzv1edu.mongodb.net/mern';//The name of the database will be places
+const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.mzv1edu.mongodb.net/${process.env.DB_NAME}`;//The name of the database will be places
 
 const app = express();
 
